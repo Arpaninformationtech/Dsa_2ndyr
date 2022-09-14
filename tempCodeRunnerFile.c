@@ -1,0 +1,2 @@
+   // pop(&top);
+    //  linkedListTraversal(top);
