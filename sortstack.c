@@ -87,14 +87,26 @@ void sortedInsert(struct Stack* s, int x)
     push(s, temp);
 }
 
+// void sortStack(struct Stack* s)
+// {
+//     if (s->top != -1)
+//     {
+//         int x = pop(s); 
+//         sortStack(s); 
+//         sortedInsert(s, x);
+//     }
+// }
 void sortStack(struct Stack* s)
 {
-    if (s->top != -1)
-    {
-        int x = pop(s); 
-        sortStack(s); 
-        sortedInsert(s, x);
-    }
+    if (s->top == -1)
+    return;
+
+    int num = pop(s);
+//  recursive approach 
+    sortStack(s);
+
+    sortedInsert(s,num);
+    
 }
 
 void main()
