@@ -1,88 +1,139 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <stdlib.h>
 
-typedef struct Node {
-    int val;
-    struct Node* next;
-}LL;
-
-LL* createNode()
+// Stack type
+struct stack
 {
-    LL* node= (LL*)malloc(sizeof(LL));
-    node->val= 0;
-    node->next= NULL;
-    return node;
+    int top;
+    int size;
+    int *array;
+};
+int isEmpty(struct stack *stack)
+{
+    return stack->top == -1;
+}
+int pop(struct stack *stack)
+{
+    if (!isEmpty(stack))
+        return stack->array[stack->top--];
+    return '$';
 }
 
-void push(LL** top, int value)
+void push(struct stack *stack, int op)
 {
-    LL* new_node= createNode();
-    new_node->val= value;
-    new_node->next= (*top);
-    *top= new_node;
+    stack->array[++stack->top] = op;
 }
-
-int pop(LL** top)
+int Postfix_Evaluation(char* exp)
 {
-    LL* temp= *top;
-    *top= (*top)->next;
-    int value= temp->val;
-    free(temp);
-    return value;
-}
+    struct stack* stack = (struct stack*) malloc(sizeof(struct stack));
+    stack->top=-1;
+    stack->size=strlen(exp);
+    stack->array=(int*) malloc(stack->size*sizeof(int));
 
-void display(LL* ptr)
-{
-
-    while(ptr!=NULL)
+    for (int i = 0; i<strlen(exp); ++i)
     {
-        printf("%d -> ", ptr->val);
-        ptr= ptr->next;
-    }
-    printf("END\n");
-}
+        
+        if (exp[i] == ' ')
+            continue;
 
-void main()
-{
-    char* inp= malloc(100*sizeof(char)); int choice;
-    printf("Enter 1 for postfix and 2 for prefix expression: ");
-    scanf("%d", &choice);
-
-    printf("Enter expression: \n");
-    fflush(stdin);
-    fgets(inp, 100, stdin);
-    if(choice==2)
-        inp= strrev(inp);
-    inp[strlen(inp)]= '\0';
-
-    LL* Head= NULL;
-    char* token= strtok(inp, " ");
-    while(token != NULL)
-    {
-        if(*token=='*' || *token=='+' || *token=='/' || *token=='-')
+        else if (isdigit(exp[i]))
         {
-            int num2= pop(&Head);
-            int num1= pop(&Head);
-            switch(token[0])
+            int num = 0;
+
+            
+            
+            while (isdigit(exp[i]))
             {
-                case '*':
-                    push(&Head, num1*num2);
-                    break;
-                case '/':
-                    push(&Head, num1/num2);
-                    break;
-                case '+':
-                    push(&Head, num1+num2);
-                    break;
-                case '-':
-                    push(&Head, num1-num2);
+                num = num * 10 + (int)(exp[i] - '0');
+                i++;
             }
+            i--;
+
+            
+            push(stack, num);
         }
         else
-            push(&Head, atoi(token));
-        display(Head);
-        token= strtok(NULL, " ");
+        {
+            int val1 = pop(stack);
+            int val2 = pop(stack);
+
+            switch (exp[i])
+            {
+            case '+':
+                push(stack, val2 + val1);
+                break;
+            case '-':
+                push(stack, val2 - val1);
+                break;
+            case '*':
+                push(stack, val2 * val1);
+                break;
+            case '/':
+                push(stack, val2 / val1);
+                break;
+            }
+        }
     }
-    printf("%d", Head->val);
+    return pop(stack); 
+}
+int Prefix_Evaluation(char *exp)
+{
+    struct stack *stack = (struct stack *) malloc(sizeof(struct stack));
+    stack->top = -1;
+    stack->size = strlen(exp);
+    stack->array = (int *)malloc(stack->size * sizeof(int));
+
+    for (int i = strlen(exp)-1; i >= 0;i--)
+    {
+       
+        if (exp[i] == ' ')
+        {
+            continue;
+        }
+        else if (isdigit(exp[i]))
+        {
+            int sum = 0;
+            int n = 1;
+            while (exp[i]!= ' ')
+            {
+                sum = sum + ((int)(exp[i]-'0')) * n;
+                n = n * 10;
+                i--;
+            }
+            
+            i++;
+            push(stack, sum);
+        }
+        else
+        {
+            int val1 = pop(stack);
+            int val2 = pop(stack);
+            switch (exp[i])
+            {
+            case '+':
+                push(stack, val2 + val1);
+                break;
+            case '-':
+                push(stack, val1 - val2);
+                break;
+            case '*':
+                push(stack, val2 * val1);
+                break;
+            case '/':
+                push(stack, val2 / val1);
+                break;
+            }
+        }
+    }
+    return pop(stack);
+}
+int main()
+{
+    char exp1[] = "112 34 5 * +";
+    char exp2[]="+ * 5 34 112";
+    printf("Answer after postfix evaluation is: %d\n", Postfix_Evaluation(exp1));
+    printf("Answer of Prefix Evaluation is : %d\n",Prefix_Evaluation(exp2));
+    return 0;
 }

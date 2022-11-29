@@ -58,7 +58,7 @@ int pop(struct Stack* stack)
 }
  
 // Function to return the top from stack without removing it
-int peek(struct Stack* stack)
+int stacktop(struct Stack* stack)
 {
     if (isEmpty(stack))
         return INT_MIN;
@@ -77,7 +77,7 @@ void disp(struct Stack* stack)
 
 void sortedInsert(struct Stack* s, int x)
 {
-    if (s->top==-1 || x > peek(s))
+    if (s->top==-1 || x > stacktop(s))
     {
         push(s, x);
         return;

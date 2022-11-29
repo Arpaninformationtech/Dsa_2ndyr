@@ -30,11 +30,11 @@ struct node * deleteAtEnd(struct node * head){
     return head; 
 }
 
-int getCurrSize(struct node* node){
+int getCurrSize(struct node* ptr){
     int size=0;
 
-    while(node!=NULL){
-        node = node->next;
+    while(ptr !=NULL){
+        ptr  = ptr ->next;
         size++;
     }
     return size;
@@ -91,7 +91,7 @@ int main()
 
     printf("\nafter inserting nth element\n");
      
-    insertAfterNthNode(4,34,head);
+    insertAfterNthNode(1,34,head);
     traverseList();
     printf("\nafter deleting last element \n");
     head = deleteAtEnd(head);
@@ -149,6 +149,7 @@ void createList(int n)
         temp->next = newNode; // Link previous node with newNode
         temp = temp->next;    // Make current node as previous node
     }
+    
 }
 
 

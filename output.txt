@@ -1,0 +1,10 @@
+character    frequency    word frequency
+0				 7				 1
+1				12				 1
+
+Special characters -
+
+
+The total number of special characters are 0 
+
+The total number of words is 0 
