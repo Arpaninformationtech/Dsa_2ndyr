@@ -88,7 +88,8 @@ int main()
 
     printf("\nData in the list \n");
     traverseList();
-
+   int a;
+   scanf("")
     printf("\nafter inserting nth element\n");
      
     insertAfterNthNode(1,34,head);
