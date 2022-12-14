@@ -11,7 +11,7 @@ void linkdlisttraversal(struct Node *ptr)
 {
     while (ptr != NULL)
     {
-        printf("Element: %d\n", ptr->data);
+        printf(" %d->", ptr->data);
         ptr = ptr->next;
     }
 }

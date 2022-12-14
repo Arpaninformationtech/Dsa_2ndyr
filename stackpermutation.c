@@ -1,198 +1,91 @@
 #include <stdio.h>
-#include <stdlib.h>
+#include <stdbool.h>
 
-struct stack
-{
-    int size;
+#define MAX_N 100
+
+// Queue data structure
+struct queue {
+    int data[MAX_N];
+    int head;
+    int tail;
+};
+
+// Stack data structure
+struct stack {
+    int data[MAX_N];
     int top;
-    int *arr;
 };
 
-int IsEmptyStack(struct stack *ptr)
-{
-    if(ptr->top ==-1)
-    return 1;
-    else
-    return 0;
+// Initialize queue with given permutation
+void init_queue(struct queue *q, int permutation[], int n) {
+    for (int i = 0; i < n; i++) {
+        q->data[i] = permutation[i];
+    }
+    q->head = 0;
+    q->tail = n;
 }
 
-int IsFullStack(struct stack *ptr)
-{
-    if(ptr->top == ptr->size -1)
-    return 1;
-    else
-    return 0;
+// Dequeue the first element from the queue
+int dequeue(struct queue *q) {
+    return q->data[q->head++];
 }
 
-void push(struct stack *ptr, int val)
-{
-    if(IsFullStack(ptr)==1)
-    printf("Stack Overflow\n");
-    else{
-        ptr->top++;
-        ptr->arr[ptr->top]=val;
-
-    }
+// Enqueue an element at the end of the queue
+void enqueue(struct queue *q, int element) {
+    q->data[q->tail++] = element;
 }
 
-int pop(struct stack *ptr)
-{
-    if(IsEmptyStack(ptr)==1)
-    {
-       
-        return -1;
-    } 
-    else
-    {
-        int ele = ptr->arr[ptr->top];
-        ptr->top--;
-        return ele;
-    }
-}
-int peekStack(struct stack* ptr)
-{
-    if(IsEmptyStack(ptr)==1)
-    {
-        
-        return -1;
-    } 
-    else
-    {
-        int ele = ptr->arr[ptr->top];
-        return ele;
-    }
-}
-struct queue
-{
-    int size;
-    int f;
-    int r;
-    int* arr;
-};
-
-struct queue* createQueue(int size)
-{
-    struct queue* q = (struct queue*) malloc(sizeof(struct queue));
-    q->size=size;
-    q->f=-1;
-    q->r=-1;
-    q->arr=(int*) malloc(q->size*sizeof(int));
-
-    return q;
+// Initialize stack to be empty
+void init_stack(struct stack *s) {
+    s->top = 0;
 }
 
-int isEmpty(struct queue *q){
-    if(q->r==q->f){
-        return 1;
-    }
-    return 0;
+// Push an element onto the top of the stack
+void push(struct stack *s, int element) {
+    s->data[s->top++] = element;
 }
- 
-int isFull(struct queue *q){
-    if(q->r==q->size-1){
-        return 1;
-    }
-    return 0;
-}
- 
-void enqueue(struct queue *q, int val){
-    if(isFull(q)){
-        printf("This Queue is full\n");
-    }
-    else{
-        q->r++;
-        q->arr[q->r] = val;
-        
-    }
-}
- 
-int dequeue(struct queue *q){
-    int a = -1;
-    if(isEmpty(q)){
-        
-    }
-    else{
-        q->f++;
-        a = q->arr[q->f]; 
-    }
-    return a;
-}
-int peekQueue(struct queue *q){
-    int a = -1;
-    if(isEmpty(q)){
-       
-        return -1;
-    }
-    else{
-        a = q->arr[q->f+1];
-    }
-    return a;
-}
- 
 
-int main()
-{
+// Pop the top element from the stack
+int pop(struct stack *s) {
+    return s->data[--s->top];
+}
+
+// Check if given permutation is a stack permutation
+bool is_stack_permutation(int permutation[], int n) {
+    struct queue q;
+    struct stack s;
+    init_queue(&q, permutation, n);
+    init_stack(&s);
+
+    int x = dequeue(&q);
+    push(&s, x);
+
+    while (s.top > 0) {
+        int y = pop(&s);
+        enqueue(&q, y);
+        if (y != permutation[q.head]) {
+            return false;
+        }
+        x = dequeue(&q);
+        push(&s, x);
+    }
+
+    return q.tail == n && q.head == n;
+}
+
+int main() {
     int n;
-    printf("Enter the size of the required permutation\n");
-    scanf("%d",&n);
+    printf("Enter the length of the permutation: ");
+    scanf("%d", &n);
 
-    struct queue* P = createQueue(n);
-    struct queue* Q = createQueue(n);
-
-    for(int i=1; i<=n;i++)
-    {
-        enqueue(P, i);
+    int permutation[MAX_N];
+    printf("Enter the permutation: ");
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &permutation[i]);
     }
 
-    struct stack* stack = (struct stack*) malloc(sizeof(struct stack));
-    stack->size=n;
-    stack->top=-1;
-    stack->arr= (int*) malloc(stack->size*sizeof(int));
+    printf("The given permutation is a stack permutation: %d\n", is_stack_permutation(permutation, n));
 
-    printf("Enter the required permutation (with space between two elements)\n");
-    for(int i=0; i<n; i++)
-    {
-        int ele;
-        scanf("%d",&ele);
-        enqueue(Q, ele);
-    }
-    int val;
-    int ans =0;
-    int t=n;
-    while(n--)
-    {
-        val = dequeue(Q);
-        if(val>t)
-        {
-            printf("Invalid Permutation\n");
-            return;
-        }
-        if(val == peekQueue(P))
-        {
-            dequeue(P);
-        }
-        else if(val==peekStack(stack))
-        {
-            pop(stack);
-        }
-        else if(val > peekQueue(P) && !isEmpty(P))
-        {
-            while(peekQueue(P)!= val)
-            {
-                push(stack, dequeue(P));
-            }
-            dequeue(P);
-        }
-        else
-        {
-            ans=1;
-            break;
-        }
-    }
-
-    if(ans==0)
-    printf("This is a stack permutation\n");
-    else
-    printf("This is not a stack permutation\n");
+    return 0;
 }
 
